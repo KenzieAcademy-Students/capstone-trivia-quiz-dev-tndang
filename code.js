@@ -7,7 +7,10 @@
 
 
 async function retrieveAPIQuestions() { // Retrieve 100 Questions from jService Kenzie API
-    let response = fetch('https://jservice.kenzie.academy/api/clues')
+    let randomCategoryID = fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
+        .then(response => response.json())
+        .then(data => console.log(data));
+    let response = fetch(`https://jservice.kenzie.academy/api/clues?category=${randomCategoryID}`)
         .then(response => response.json())
         .then(data => console.log(data));
 }
