@@ -3,19 +3,22 @@
 
 // YOUR CODE HERE!
 
-// Select a category for the questions from the jService Kenzie API
-
-
-async function retrieveAPIQuestions() { // Retrieve 100 Questions from jService Kenzie API
-    let randomCategoryID = fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
-        .then(response => response.json())
-        .then(data => console.log(data));
-    let response = fetch(`https://jservice.kenzie.academy/api/clues?category=${randomCategoryID}`)
-        .then(response => response.json())
-        .then(data => console.log(data));
+async function randomAPIQuestion() { // Retrieve a random question's whose clue is valid from the jService Kenzie API
+    fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
+        .then(randomQuestionResponse => randomQuestionResponse.json())
+        .then(exportCategoryData => retrieveAPIQuestions(exportCategoryData));
 }
 
-retrieveAPIQuestions();
+async function retrieveAPIQuestions(randomCategoryData) { // Retrieve up to 100 Questions from jService Kenzie API limited to a Category ID
+    console.log(randomCategoryData);
+    let setCategoryId = randomCategoryData;
+    fetch(`https://jservice.kenzie.academy/api/clues?category=${setCategoryId.categoryId}`)
+        .then(setCategoryResponse => setCategoryResponse.json())
+        .then(hundredQuestions => console.log(hundredQuestions));
+    return randomCategoryData
+}
+
+randomAPIQuestion();
 
 // Display one the Questions with an Answer Field
 
