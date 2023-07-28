@@ -36,8 +36,9 @@ function renderGameQuestion(questionData) {// Display one of the Questions from 
 
 function selectedQuestion(dataSet) { // This function will take in the set of questions returned from the API and select a question to be rendered from that set
     console.log(dataSet);
-    let result = dataSet
-    return JSON.stringify(result.clues[1].question)
+    let result = dataSet;
+    let arrayIndex = Math.floor(Math.random(0) * result.clues.length - 1);
+    return JSON.stringify(result.clues[arrayIndex].question)
 }
 
 // Compare user answer to correct answer
