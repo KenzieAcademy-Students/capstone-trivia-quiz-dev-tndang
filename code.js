@@ -6,6 +6,12 @@
 let startButton = document.getElementById("startButton");
 startButton.addEventListener("click", startGame);
 
+function startGame() { // Starts the game
+    startButton.remove();
+    let submitAnswer = document.getElementById("submitAnswer");
+    submitAnswer.addEventListener("click", checkUserAnswer);
+}
+
 async function randomAPIQuestion() { // Retrieve a random question's whose clue is valid from the jService Kenzie API
     fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
         .then(randomQuestionResponse => randomQuestionResponse.json())
@@ -22,15 +28,20 @@ async function retrieveAPIQuestions(randomCategoryData) { // Retrieve up to 100 
 
 randomAPIQuestion();
 
-function startGame() { // Starts the game
-    startButton.remove();
-    let submitAnswer = document.getElementById("submitAnswer");
-    submitAnswer.addEventListener("click", checkUserAnswer);
-}
+let currentQuestionAnswer;
 
 function checkUserAnswer() { // Compare user answer to correct answer
-    let answer = document.getElementById("userAnswer").value
-    console.log(answer);
+    let userAnswer = document.getElementById("userAnswer").value.replace(/[^A-Z0-9]/ig, "");
+    let finalUserAnswerLC = userAnswer.toLowerCase();
+    let correctAnswer = currentQuestionAnswer.replace(/[^A-Z0-9]/ig, "")
+    let correctAnswerLC = correctAnswer.toLowerCase();
+    console.log(finalUserAnswerLC);
+    console.log(correctAnswerLC);
+    if (finalUserAnswerLC === correctAnswerLC) {
+        console.log("Nice Job")
+    } else {
+        console.log("Sorry you are wrong...")
+    }   
 }
 
 function renderGameQuestion(questionData) {// Display one of the Questions from the random category with an Answer Field
@@ -52,6 +63,7 @@ function selectedQuestion(dataSet) { // This function will take in the set of qu
     console.log(dataSet);
     let result = dataSet;
     let arrayIndex = Math.floor(Math.random(0) * result.clues.length - 1);
+    currentQuestionAnswer = JSON.stringify(result.clues[arrayIndex].answer);
     return JSON.stringify(result.clues[arrayIndex].question)
 }
 
