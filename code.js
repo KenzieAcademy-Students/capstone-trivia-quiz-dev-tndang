@@ -26,10 +26,18 @@ function startGame() { // Starts the game
     startButton.remove();
 }
 
+
+
 function renderGameQuestion(questionData) {// Display one of the Questions from the random category with an Answer Field
-    console.log(questionData);
-    document.write(questionData);
+    let question = selectedQuestion(questionData);
+    document.write(question);
     return questionData;
+}
+
+function selectedQuestion(dataSet) { // This function will take in the set of questions returned from the API and select a question to be rendered from that set
+    console.log(dataSet);
+    let result = dataSet
+    return JSON.stringify(result.clues[1].question)
 }
 
 // Compare user answer to correct answer
