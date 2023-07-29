@@ -33,12 +33,14 @@ async function retrieveAPIQuestions(randomCategoryData) { // Retrieve up to 100 
 randomAPIQuestion();
 
 let currentQuestionAnswer;
+let currentQuestionIndex;
 let userScore = 0;
 
 function selectedQuestion(dataSet) { // This function will take in the set of questions returned from the API and select a question to be rendered from that set
     console.log(dataSet);
     let result = dataSet;
     let arrayIndex = Math.floor(Math.random(0) * result.clues.length - 1);
+    currentQuestionIndex = arrayIndex;
     currentQuestionAnswer = JSON.stringify(result.clues[arrayIndex].answer);
     return JSON.stringify(result.clues[arrayIndex].question)
 }
@@ -46,6 +48,8 @@ function selectedQuestion(dataSet) { // This function will take in the set of qu
 function checkUserAnswer() { // Compare user answer to correct answer
     let congratsScreen = document.getElementById("congratsMessage");
     let gameOverScreen = document.getElementById("gameOverMessage");
+    let nextButton = document.getElementById("nextButton");
+    let restartButton = document.getElementById("restartButton");
     let userAnswer = document.getElementById("userAnswer").value.replace(/[^A-Z0-9]/ig, "");
     let finalUserAnswerLC = userAnswer.toLowerCase();
     let correctAnswer = currentQuestionAnswer.replace(/[^A-Z0-9]/ig, "")
@@ -55,12 +59,23 @@ function checkUserAnswer() { // Compare user answer to correct answer
     if (finalUserAnswerLC === correctAnswerLC) {
         userScore++;
         congratsScreen.style.display = "block";
+        nextButton.addEventListener("click", nextQuestion);
         console.log("Nice Job")
         console.log(`Score: ${userScore}`)
     } else {
         gameOverScreen.style.display = "block";
+        restartButton.addEventListener("click", restartGame)
         console.log("Sorry you are wrong...")
     }   
+}
+
+function nextQuestion() {
+    let congratsScreen = document.getElementById("congratsMessage");
+    congratsScreen.style.display = "none";
+}
+
+function restartGame() {
+    location.reload();
 }
 
 function renderGameQuestion(questionData) {// Display one of the Questions from the random category with an Answer Field
