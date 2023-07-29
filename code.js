@@ -6,10 +6,11 @@
 let startButton = document.getElementById("startButton");
 startButton.addEventListener("click", startGame);
 
-function startGame() { // Starts the game
-    startButton.remove();
-    console.log(`Score: ${userScore}`);
+function startGame() { // Starts the game 
+    let welcomeScreen = document.getElementById("gameWelcome");
     let submitAnswer = document.getElementById("submitAnswer");
+    welcomeScreen.style.display = "none";
+    console.log(`Score: ${userScore}`);
     submitAnswer.addEventListener("click", checkUserAnswer);
 }
 
@@ -55,6 +56,8 @@ function checkUserAnswer() { // Compare user answer to correct answer
         console.log("Sorry you are wrong...")
     }   
 }
+
+
 
 function renderGameQuestion(questionData) {// Display one of the Questions from the random category with an Answer Field
     let question = selectedQuestion(questionData);
