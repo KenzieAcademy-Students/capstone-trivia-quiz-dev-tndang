@@ -46,27 +46,11 @@ function selectedQuestion(dataSet) { // This function will take in the set of qu
 }
 
 function checkUserAnswer() { // Compare user answer to correct answer
-    let congratsScreen = document.getElementById("congratsMessage");
-    let gameOverScreen = document.getElementById("gameOverMessage");
-    let nextButton = document.getElementById("nextButton");
-    let restartButton = document.getElementById("restartButton");
     let userAnswer = document.getElementById("userAnswer").value.replace(/[^A-Z0-9]/ig, "");
     let finalUserAnswerLC = userAnswer.toLowerCase();
     let correctAnswer = currentQuestionAnswer.replace(/[^A-Z0-9]/ig, "")
     let correctAnswerLC = correctAnswer.toLowerCase();
-    console.log(finalUserAnswerLC);
-    console.log(correctAnswerLC);
-    if (finalUserAnswerLC === correctAnswerLC) {
-        userScore++;
-        congratsScreen.style.display = "block";
-        nextButton.addEventListener("click", nextQuestion);
-        console.log("Nice Job")
-        console.log(`Score: ${userScore}`)
-    } else {
-        gameOverScreen.style.display = "block";
-        restartButton.addEventListener("click", restartGame)
-        console.log("Sorry you are wrong...")
-    }   
+    displayResultMessages(finalUserAnswerLC, correctAnswerLC);
 }
 
 function nextQuestion() {
@@ -95,4 +79,20 @@ function renderGameQuestion(questionData) {// Display one of the Questions from 
 
 // Proceed to next question after answered
 
-// Display Congrats or Correct answer depending on answer
+function displayResultMessages(userAnswer, correctAnswer) { // Display Congrats or Correct answer depending on answer
+    let congratsScreen = document.getElementById("congratsMessage");
+    let gameOverScreen = document.getElementById("gameOverMessage");
+    let nextButton = document.getElementById("nextButton");
+    let restartButton = document.getElementById("restartButton");
+    if (userAnswer === correctAnswer) {
+        userScore++;
+        congratsScreen.style.display = "block";
+        nextButton.addEventListener("click", nextQuestion);
+        console.log(`Score: ${userScore}`)
+    } else {
+        gameOverScreen.style.display = "block";
+        console.log(`You Answered: ${userAnswer}\nThe Correct Answer is: ${correctAnswer}`);   
+        restartButton.addEventListener("click", restartGame)
+
+    }
+}
