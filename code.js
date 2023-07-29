@@ -9,7 +9,9 @@ startButton.addEventListener("click", startGame);
 function startGame() { // Starts the game 
     let welcomeScreen = document.getElementById("gameWelcome");
     let submitAnswer = document.getElementById("submitAnswer");
+    let gameScreen = document.getElementById("gameArea");
     welcomeScreen.style.display = "none";
+    gameScreen.style.display = "block"
     console.log(`Score: ${userScore}`);
     submitAnswer.addEventListener("click", checkUserAnswer);
 }
@@ -42,6 +44,8 @@ function selectedQuestion(dataSet) { // This function will take in the set of qu
 }
 
 function checkUserAnswer() { // Compare user answer to correct answer
+    let congratsScreen = document.getElementById("congratsMessage");
+    let gameOverScreen = document.getElementById("gameOverMessage");
     let userAnswer = document.getElementById("userAnswer").value.replace(/[^A-Z0-9]/ig, "");
     let finalUserAnswerLC = userAnswer.toLowerCase();
     let correctAnswer = currentQuestionAnswer.replace(/[^A-Z0-9]/ig, "")
@@ -50,18 +54,18 @@ function checkUserAnswer() { // Compare user answer to correct answer
     console.log(correctAnswerLC);
     if (finalUserAnswerLC === correctAnswerLC) {
         userScore++;
+        congratsScreen.style.display = "block";
         console.log("Nice Job")
         console.log(`Score: ${userScore}`)
     } else {
+        gameOverScreen.style.display = "block";
         console.log("Sorry you are wrong...")
     }   
 }
 
-
-
 function renderGameQuestion(questionData) {// Display one of the Questions from the random category with an Answer Field
     let question = selectedQuestion(questionData);
-    let gameArea = document.getElementById("gameArea");
+    let gameArea = document.getElementById("gameContent");
     let answerField = document.createElement("input");
     let submitAnswer = document.createElement("button");
     gameArea.append(question);

@@ -10,3 +10,4 @@ Follow the instructions provided on my.kenzie.academy for this assignment.
 - https://stackoverflow.com/questions/13020246/remove-special-symbols-and-extra-spaces-and-replace-with-underscore-using-the-re
 - https://www.freecodecamp.org/news/javascript-refresh-page-how-to-reload-a-page-in-js/#:~:text=The%20simplest%20way%20to%20refresh,and%20loading%20the%20latest%20content.
 - https://www.w3schools.com/howto/howto_css_modals.asp
+- https://www.w3schools.com/cssref/css_selectors.php

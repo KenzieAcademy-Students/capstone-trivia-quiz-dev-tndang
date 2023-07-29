@@ -13,15 +13,12 @@
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   }
 
-#gameTitle {
-    display: none;
-}
-
-#gameArea {
+/* Modals off at Load */
+#gameArea, #congratsMessage, #gameOverMessage {
     display: none;
 }  
 
-  /* Modal Content */
+/* Modal Content */
 .modal-content {
     background-color: #fefefe;
     margin: auto;
