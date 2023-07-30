@@ -15,46 +15,62 @@ let userScore = 0;
 randomAPIQuestion();
 
 function startGame() { // Starts the game 
+    console.log(categoryIDArray);
+    console.log(categoryNameArray);
+    renderCategorySelection();
     let welcomeScreen = document.getElementById("gameWelcome");
-    let submitAnswer = document.getElementById("submitAnswer");
     let gameScreen = document.getElementById("gameArea");
     welcomeScreen.style.display = "none";
     gameScreen.style.display = "block"
     console.log(`Score: ${userScore}`);
-    submitAnswer.addEventListener("click", checkUserAnswer);
-    console.log(categoryArray);
 }
+
+let categoryIDArray = [];
+let categoryNameArray = [];
 
 async function randomAPIQuestion() { // Retrieve a random question's whose clue is valid from the jService Kenzie API
-    await fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
-        .then(randomQuestionResponse => randomQuestionResponse.json())
-        .then(exportCategoryData => retrieveAPIQuestions(exportCategoryData));
+    for (let limit = 1; limit <= 10; limit++) {
+        await fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
+            .then(randomQuestionResponse => randomQuestionResponse.json())
+            .then(exportCategoryData => assignCategoriesToArray(exportCategoryData));
+    }
 }
-
-async function testCategories() { // Test to retrieve multiple categories
-    for (let step = 0; step < 5; step++) {
-        fetch ("https://jservice.kenzie.academy/api/random-clue?valid=true")
-        .then(categoryResponse => categoryResponse.json())
-        .then(exportCategoryData => assignCategoriesToArray(exportCategoryData))
-      }
-}
-
-let categoryArray = [];
 
 function assignCategoriesToArray(dataSet) {
-    categoryArray.push(dataSet.categoryId);
+    categoryIDArray.push(dataSet.categoryId);
+    determineCategoryName(dataSet.categoryId);
     return dataSet;
 }
 
-testCategories();
+function assignNameToArray(dataSet) {
+    categoryNameArray.push(dataSet.title)
+    return dataSet;
+}
 
+function determineCategoryName(categoryID) {
+    fetch(`https://jservice.kenzie.academy/api/categories/${categoryID}`)
+        .then(response => response.json())
+        .then(categoryData => assignNameToArray(categoryData));
+}
 
-async function retrieveAPIQuestions(randomCategoryData) { // Retrieve up to 100 Questions from jService Kenzie API limited to the Category ID returned from the randomAPIQuestion function
+function renderCategorySelection() {
+    for (let amount = 0; amount < categoryIDArray.length; amount++) {
+        let categoryButton = document.createElement("button");
+        let buttonLocation = document.getElementById("categorySelection");
+
+        buttonLocation.append(categoryButton)
+        categoryButton.id = `category${amount}`;
+        categoryButton.innerText = `${categoryNameArray[amount]}`;
+        categoryButton.value = categoryIDArray[amount];
+    }
+}
+
+function retrieveAPIQuestions(randomCategoryData) { // Retrieve up to 100 Questions from jService Kenzie API limited to the Category ID returned from the randomAPIQuestion function
     let setCategoryId = randomCategoryData.categoryId;
-    await fetch(`https://jservice.kenzie.academy/api/clues?category=${setCategoryId}`)
+    fetch(`https://jservice.kenzie.academy/api/clues?category=${setCategoryId}`)
         .then(setCategoryResponse => setCategoryResponse.json())
         .then(randomQuestionData => renderGameQuestion(randomQuestionData));
-    return randomCategoryData;s
+    return randomCategoryData;
 }
 
 function selectedQuestion(dataSet) { // This function will take in the set of questions returned from the API and select a question to be rendered from that set
