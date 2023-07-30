@@ -7,12 +7,14 @@
 let startButton = document.getElementById("startButton");
 startButton.addEventListener("click", startGame);
 
+let currentQuestionClue;
 let currentQuestionAnswer;
 let currentQuestionIndex;
 let currentCategoryID;
 
 let categoryIDArray = [];
 let categoryNameArray = [];
+let usedQuestionsArray = [];
 
 let userScore = 0;
 
@@ -20,7 +22,7 @@ randomAPIQuestion();
 
 async function randomAPIQuestion() { // Retrieve random question's whose clue is valid from the jService Kenzie API
     for (let limit = 1; limit <= 10; limit++) {
-        await fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
+        fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
             .then(randomQuestionResponse => randomQuestionResponse.json())
             .then(exportCategoryData => assignCategoriesToArray(exportCategoryData));
     }
@@ -81,16 +83,27 @@ function setCategoryID() { // Sets the game's current category and starts the ga
 function retrieveAPIQuestions() { // Retrieve up to 100 Questions from jService Kenzie API limited to the Category ID returned from the randomAPIQuestion function
     fetch(`https://jservice.kenzie.academy/api/clues?category=${currentCategoryID}`)
         .then(setCategoryResponse => setCategoryResponse.json())
-        .then(randomQuestionData => renderGameQuestion(randomQuestionData));
+        .then(randomQuestionData => determineQuestionData(randomQuestionData));
 }
 
-function selectedQuestion(dataSet) { // This function will take in the set of questions returned from the API and select a question to be rendered from that set
-    console.log(dataSet);
-    let result = dataSet;
-    let arrayIndex = Math.floor(Math.random(0) * result.clues.length - 1);
-    currentQuestionIndex = arrayIndex;
-    currentQuestionAnswer = JSON.stringify(result.clues[arrayIndex].answer);
-    return JSON.stringify(result.clues[arrayIndex].question)
+function determineQuestionData(questionData) {
+    let result = questionData;
+    let questionIndex = determineUsedQuestions(result);
+    currentQuestionClue = result.clues[questionIndex].question;
+    currentQuestionAnswer = result.clues[questionIndex].answer;
+    return questionData;
+}
+
+function determineUsedQuestions(questionData) {
+    let newData = questionData.clues;
+    if (usedQuestionsArray.length > 0) {
+        for (let index = 0; index < usedQuestionsArray.length; index++) {
+            newData.splice(usedQuestionsArray[index], 1)
+        }
+    }
+    let randomIndex = Math.floor(Math.random(0) * newData.length -1)
+    usedQuestionsArray.push(randomIndex);
+    return randomIndex;
 }
 
 function checkUserAnswer() { // Compare user answer to correct answer
@@ -111,11 +124,12 @@ function restartGame() { // Refreshes the page to restart the game
 }
 
 function renderGameQuestion(questionData) {// Display one of the Questions from the random category with an Answer Field
-    let question = selectedQuestion(questionData);
     let gameArea = document.getElementById("gameContent");
+    let clueField = document.createElement("h3");
     let answerField = document.createElement("input");
     let submitAnswer = document.createElement("button");
-    gameArea.append(question);
+    gameArea.append(clueField);
+    clueField.id = "clue";
     gameArea.append(answerField);
     answerField.type = "text";
     answerField.id = "userAnswer";
