@@ -46,7 +46,6 @@ function startGame() { // Starts the game
     checkAnswerButton.addEventListener("click", determineAnswersCorrect);
     welcomeScreen.style.display = "none";
     categorySelection.style.display = "block"
-    console.log(`Score: ${userScore}`);
 }
 
 function nextQuestion() { // Proceeds to the next question in the category
@@ -136,28 +135,6 @@ function setCategoryID() { // Sets the game's current category and starts the ga
     console.log(currentCategoryID);
 }
 
-function updateClueField(questionData, questionIndex) { // Update Question/Clue HTML element on the page
-    let clueField = document.getElementById("clue");
-    clueField.innerText = `${questionData.clues[questionIndex].question.toUpperCase()}`;
-    console.log(questionData.clues[questionIndex].question);
-}
-
-function renderGameArea() {// Display the Questions the question game area with the current question/clue and an Answer Field
-    let gameArea = document.getElementById("gameContent");
-    let clueField = document.createElement("h3");
-    let answerField = document.createElement("input");
-    let submitAnswer = document.createElement("button");
-    gameArea.append(clueField);
-    clueField.id = "clue";
-    clueField.innerText = "";
-    gameArea.append(answerField);
-    answerField.type = "text";
-    answerField.id = "userAnswer";
-    gameArea.append(submitAnswer);
-    submitAnswer.id = "submitAnswer";
-    submitAnswer.innerText = "Check Answer";
-}
-
 function renderCategorySelection() { // Renders Category Buttons to the Catergory Selection Screen after Random Categories have been determined
     for (let amount = 0; amount < categoryIDArray.length; amount++) {
         let categoryButton = document.createElement("button");
@@ -174,19 +151,53 @@ function renderCategorySelection() { // Renders Category Buttons to the Catergor
     console.log(categoryNameArray);
 }
 
+function renderGameArea() {// Display the Questions the question game area with the current question/clue and an Answer Field
+    let gameArea = document.getElementById("gameContent");
+    let clueField = document.createElement("h3");
+    let answerField = document.createElement("input");
+    let submitAnswer = document.createElement("button");
+    let scoreDisplay = document.createElement("h3");
+    gameArea.append(clueField);
+    clueField.id = "clue";
+    clueField.innerText = "";
+    gameArea.append(answerField);
+    answerField.type = "text";
+    answerField.id = "userAnswer";
+    gameArea.append(submitAnswer);
+    submitAnswer.id = "submitAnswer";
+    submitAnswer.innerText = "Check Answer";
+    gameArea.append(scoreDisplay);
+    scoreDisplay.id = "gameFooterScore";
+    scoreDisplay.innerText = `SCORE: ${userScore}`;
+}
+function updateClueField(questionData, questionIndex) { // Update Question/Clue HTML element on the page
+    let clueField = document.getElementById("clue");
+    clueField.innerText = `${questionData.clues[questionIndex].question.toUpperCase()}`;
+    console.log(questionData.clues[questionIndex].question);
+}
+
+function updatePointsRender() { // This funtion will update the point render in the game
+    let scoreGameScreen = document.getElementById("gameFooterScore");
+    scoreGameScreen.innerText = `SCORE: ${userScore}`;
+    console.log(`Score: ${userScore}`)
+}
+
 function displayResultMessages(userAnswer, correctAnswer) { // Display Congrats or Correct answer depending on answer
     let congratsScreen = document.getElementById("congratsMessage");
     let gameOverScreen = document.getElementById("gameOverMessage");
     let nextButton = document.getElementById("nextButton");
     let restartButton = document.getElementById("restartButton");
+    let correctAnswerDisplay = document.getElementById("correctAnswer");
+    let endScoreDisplay = document.getElementById("endScore");
     if (userAnswer === correctAnswer) {
         userScore++;
+        updatePointsRender();
         congratsScreen.style.display = "block";
         nextButton.addEventListener("click", nextQuestion);
-        console.log(`Score: ${userScore}`)
     } else {
         gameOverScreen.style.display = "block";
-        console.log(`You Answered: ${userAnswer}\nThe Correct Answer is: ${correctAnswer}`);   
+        correctAnswerDisplay.innerText = `The Correct Answer was: \n${correctAnswer.toUpperCase()}`
+        endScoreDisplay.innerText = `FINAL SCORE: ${userScore}`;
         restartButton.addEventListener("click", restartGame)
     }
 }

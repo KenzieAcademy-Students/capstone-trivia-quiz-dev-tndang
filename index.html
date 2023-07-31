@@ -30,6 +30,9 @@
         <button id="startButton">Start</button>
         <h3>PRESS "START" TO PLAY</h3>
       </div>
+      <div id="howToPlay" class="modal-footer">
+        <p><strong>How to Play:</strong> Select a Category, and guess the answer with the clue provided. For each one you get right, earn a point. If you get any wrong it is "Game Over". How far can you go?</p>
+      </div>
     </div>
     <!-- The Game-->
     <div>
@@ -44,7 +47,6 @@
         <div id="gameContent" class="modal-content">
         </div>
       </div>
-      <script src="code.js"></script>
     </div>
     <!-- Game Messages-->
     <div>
@@ -56,10 +58,13 @@
       </div>
       <div id="gameOverMessage" class="modal">
         <div id="gameOverContent" class="modal-content">
-          <h2>Game Over!</h2>
-          <button id="restartButton">Restart</button>
+          <h1>GAME OVER</h1>
+          <h4 id="correctAnswer"></h4>
+          <button id="restartButton">Try Again?</button>
+          <h3 id="endScore"></h3>
         </div>
       </div>
     </div>
+    <script src="code.js"></script>
   </body>
 </html>
