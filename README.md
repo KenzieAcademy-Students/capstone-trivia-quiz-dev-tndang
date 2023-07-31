@@ -3,6 +3,8 @@
 Complete your work inside of `code.js`
 
 Follow the instructions provided on my.kenzie.academy for this assignment.
+
+Referred to the following as reference:
 - Week 26 Topic Session 
 - Notes from previous sessions
 - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
@@ -15,3 +17,9 @@ Follow the instructions provided on my.kenzie.academy for this assignment.
 - https://www.w3schools.com/jsref/event_onclick.asp
 - https://getcssscan.com/css-buttons-examples
 - https://developer.mozilla.org/en-US/docs/Web/API/setTimeout
+
+Images used from:
+- https://gifer.com/en/6mz
+- https://gifer.com/en/XOsX
+- https://gifer.com/en/K1up
+- https://gifer.com/en/XVo6
