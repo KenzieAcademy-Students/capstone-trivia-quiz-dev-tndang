@@ -88,7 +88,6 @@ function determineQuestionData(questionData) { // Determines the question and an
     let currentIndex = determineUsedQuestions(questionData);
     updateClueField(questionData, currentIndex);
     currentQuestionAnswer = questionData.clues[currentIndex].answer;
-    currentCategoryTitle = questionData.clues[currentIndex].category.title;
     if (questionData.clues.length === 1) {
         haveQuestionsRemaining = 0;
     }
@@ -219,7 +218,7 @@ function updatePointsRender() { // This funtion will update the point render in 
 
 // ---------------------------------------------------------------------------------------
 
-function devConsoleLogTool(theTest) { // A dev tool function to return an object in the console with detail of a test
+function devConsoleLogTool(theTest) { // A dev tool function to return an object in the console with details of a test
     let developerView = {
         devCheatSheet: {        
             theCategoryID: theTest.categoryId,
