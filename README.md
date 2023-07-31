@@ -14,3 +14,4 @@ Follow the instructions provided on my.kenzie.academy for this assignment.
 - https://www.w3schools.com/cssref/css_selectors.php
 - https://www.w3schools.com/jsref/event_onclick.asp
 - https://getcssscan.com/css-buttons-examples
+- https://developer.mozilla.org/en-US/docs/Web/API/setTimeout

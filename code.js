@@ -20,6 +20,7 @@ let userScore = 0;
 // Active at Load Start
 startButton.addEventListener("click", startGame);
 randomAPIQuestionReference();
+setTimeout(loadingScreenOff, 5000);
 
 async function randomAPIQuestionReference() { // Retrieve random question's whose clue is valid from the jService Kenzie API
     let response;
@@ -87,6 +88,7 @@ function determineQuestionData(questionData) { // Determines the question and an
     let currentIndex = determineUsedQuestions(questionData);
     updateClueField(questionData, currentIndex);
     currentQuestionAnswer = questionData.clues[currentIndex].answer;
+    currentCategoryTitle = questionData.clues[currentIndex].category.title;
     if (questionData.clues.length === 1) {
         haveQuestionsRemaining = 0;
     }
@@ -139,11 +141,15 @@ function displayResultMessages(userAnswer, correctAnswer) { // Display Congrats 
     }
 }
 
+function loadingScreenOff() { // This function removes the loading screen
+    let loadingScreen = document.getElementById("loadingScreen");
+    loadingScreen.remove();
+}
+
 function renderCategorySelection() { // Renders Category Buttons to the Catergory Selection Screen after Random Categories have been determined
     for (let amount = 0; amount < categoryIDArray.length; amount++) {
         let categoryButton = document.createElement("button");
         let buttonLocation = document.getElementById("categoryContent");
-
         buttonLocation.append(categoryButton)
         categoryButton.id = `category${amount}`;
         categoryButton.className = "categoryButton";
@@ -155,10 +161,14 @@ function renderCategorySelection() { // Renders Category Buttons to the Catergor
 
 function renderGameArea() {// Display the Questions the question game area with the current question/clue and an Answer Field
     let gameArea = document.getElementById("gameContent");
-    let clueField = document.createElement("h3");
+    let categoryTitle = document.createElement("h3");
+    let clueField = document.createElement("h5");
     let answerField = document.createElement("input");
     let submitAnswer = document.createElement("button");
     let scoreDisplay = document.createElement("h3");
+    gameArea.append(categoryTitle);
+    categoryTitle.id = "currentCategory";
+    categoryTitle.innerText = ""
     gameArea.append(clueField);
     clueField.id = "clue";
     clueField.innerText = "";
@@ -187,7 +197,6 @@ function updateCategoryScreen() { // This function will update the Category Sele
     let gameArea = document.getElementById("gameArea");
     let categoryScreen = document.getElementById("categorySelection");
     let selectCategoryText = document.getElementById("selectCategoryText");
-
     gameArea.style.display = "none";
     categoryScreen.style.display = "block";
     selectCategoryText.innerText = "SELECT ANOTHER CATEGORY";
@@ -197,7 +206,9 @@ function updateCategoryScreen() { // This function will update the Category Sele
 
 function updateClueField(questionData, questionIndex) { // Update Question/Clue HTML element on the page
     let clueField = document.getElementById("clue");
+    let categoryTitle = document.getElementById("currentCategory");
     clueField.innerText = `${questionData.clues[questionIndex].question.toUpperCase()}`;
+    categoryTitle.innerText = `CATEGORY - ${questionData.clues[questionIndex].category.title}`;
 }
 
 function updatePointsRender() { // This funtion will update the point render in the game
