@@ -138,7 +138,7 @@ function setCategoryID() { // Sets the game's current category and starts the ga
 
 function updateClueField(questionData, questionIndex) { // Update Question/Clue HTML element on the page
     let clueField = document.getElementById("clue");
-    clueField.innerText = `${questionData.clues[questionIndex].question}`;
+    clueField.innerText = `${questionData.clues[questionIndex].question.toUpperCase()}`;
     console.log(questionData.clues[questionIndex].question);
 }
 
