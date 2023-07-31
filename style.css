@@ -108,18 +108,18 @@ button:active {
 
 #clue, #currentCategory {
   width: 350px;
-  margin: 25px auto;
+  margin: 10px auto;
   text-align: justify;
 }
 
 #userAnswer {
   width: 300px;
   height: 35px;
-  margin: 25px auto;
+  margin: 15px auto;
 }
 
 #submitAnswer {
-  margin: 25px auto;
+  margin: 15px auto;
 }
 
 #gameImg {
