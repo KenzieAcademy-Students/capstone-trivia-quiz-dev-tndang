@@ -6,7 +6,6 @@
 // Declared Global Variables
 let startButton = document.getElementById("startButton");
 
-let currentQuestionClue;
 let currentQuestionAnswer;
 let currentQuestionIndex;
 let currentCategoryID;
@@ -15,17 +14,27 @@ let categoryIDArray = [];
 let categoryNameArray = [];
 let usedQuestionsArray = [];
 
+let haveQuestionsRemaining = 0;
 let userScore = 0;
 
 startButton.addEventListener("click", startGame);
-randomAPIQuestion();
+randomAPIQuestionReference();
 
-async function randomAPIQuestion() { // Retrieve random question's whose clue is valid from the jService Kenzie API
+async function randomAPIQuestionReference() { // Retrieve random question's whose clue is valid from the jService Kenzie API
+    let response;
     for (let limit = 1; limit <= 10; limit++) {
-        fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
+        response = await fetch (`https://jservice.kenzie.academy/api/random-clue?valid=true`)
             .then(randomQuestionResponse => randomQuestionResponse.json())
             .then(exportCategoryData => assignCategoriesToArray(exportCategoryData));
     }
+    return response;
+}
+
+function retrieveAPIQuestion() { // Retrieve up to 100 Questions from jService Kenzie API limited to the Category ID returned from the randomAPIQuestion function
+    const response = fetch(`https://jservice.kenzie.academy/api/clues?category=${currentCategoryID}`)
+        .then(setCategoryResponse => setCategoryResponse.json())
+        .then(randomQuestionData => determineQuestionData(randomQuestionData));
+    return response;
 }
 
 function startGame() { // Starts the game
@@ -34,7 +43,7 @@ function startGame() { // Starts the game
     let welcomeScreen = document.getElementById("gameWelcome");
     let categorySelection = document.getElementById("categorySelection");
     let checkAnswerButton = document.getElementById("submitAnswer");
-    checkAnswerButton.addEventListener("click", checkUserAnswer);
+    checkAnswerButton.addEventListener("click", determineAnswersCorrect);
     welcomeScreen.style.display = "none";
     categorySelection.style.display = "block"
     console.log(`Score: ${userScore}`);
@@ -42,17 +51,24 @@ function startGame() { // Starts the game
 
 function nextQuestion() { // Proceeds to the next question in the category
     let congratsScreen = document.getElementById("congratsMessage");
+    let gameArea = document.getElementById("gameArea");
+    let categoryScreen = document.getElementById("categorySelection");
+    let answerField = document.getElementById("userAnswer");
     congratsScreen.style.display = "none";
+    answerField.value = "";
+    if (haveQuestionsRemaining == 0) {
+        gameArea.style.display = "none";
+        categoryScreen.style.display = "block";
+        categoryIDArray = [];
+        usedQuestionsArray = [];
+        randomAPIQuestionReference();
+    } else {
+        retrieveAPIQuestion();
+    }
 }
 
 function restartGame() { // Refreshes the page to restart the game
     location.reload();
-}
-
-function retrieveAPIQuestion() { // Retrieve up to 100 Questions from jService Kenzie API limited to the Category ID returned from the randomAPIQuestion function
-    fetch(`https://jservice.kenzie.academy/api/clues?category=${currentCategoryID}`)
-        .then(setCategoryResponse => setCategoryResponse.json())
-        .then(randomQuestionData => determineQuestionData(randomQuestionData));
 }
 
 function assignCategoriesToArray(dataSet) { // From the randomAPI Questions whose clues are valid, assign IDs to an Array
@@ -73,41 +89,35 @@ function determineCategoryName(categoryID) { // Determines the Title of a Catego
 }
 
 function determineQuestionData(questionData) { // Determines the question and answer data to be displayed
-    let result = questionData;
-    let questionIndex = determineUsedQuestions(result);
-    currentQuestionClue = result.clues[questionIndex].question;
-    currentQuestionAnswer = result.clues[questionIndex].answer;
-    updateQuestionField();
-    console.log(currentQuestionClue);
+    console.log(questionData);
+    let currentIndex = determineUsedQuestions(questionData);
+    updateClueField(questionData, currentIndex);
+    currentQuestionAnswer = questionData.clues[currentIndex].answer;
     console.log(currentQuestionAnswer);
+    if (questionData.clues.length === 1) {
+        haveQuestionsRemaining = 0;
+    }
     return questionData;
 }
 
 function determineUsedQuestions(questionData) { // This function determines used questions via a global array managed throughout the game
     let newData = questionData.clues;
+    let randomIndex;
     if (usedQuestionsArray.length > 0) {
         for (let index = 0; index < usedQuestionsArray.length; index++) {
             newData.splice(usedQuestionsArray[index], 1)
         }
+        randomIndex = Math.floor(Math.random(0) * newData.length)
+    } else if (usedQuestionsArray.length === 1) {
+        randomIndex = 0;
+    } else {
+        randomIndex = Math.floor(Math.random(0) * newData.length)
     }
-    let randomIndex = Math.floor(Math.random(0) * newData.length -1)
     usedQuestionsArray.push(randomIndex);
     return randomIndex;
 }
 
-function setCategoryID() { // Sets the game's current category and starts the game in the selected category
-    let categoryScreen = document.getElementById("categorySelection");
-    let gameArea = document.getElementById("gameArea");
-    let clueUpdate = document.getElementById("clue");
-    currentCategoryID = this.value;
-    clueUpdate.innerText = `${currentQuestionClue}`;
-    retrieveAPIQuestion();
-    categoryScreen.style.display = "none";
-    gameArea.style.display = "block";
-    console.log(currentCategoryID);
-}
-
-function checkUserAnswer() { // Compare user answer to correct answer --- LC = Lower Case ---
+function determineAnswersCorrect() { // Compare user answer to correct answer --- LC = Lower Case ---
     let userAnswer = document.getElementById("userAnswer").value.replace(/[^A-Z0-9]/ig, "");
     let finalUserAnswerLC = userAnswer.toLowerCase();
     let correctAnswer = currentQuestionAnswer.replace(/[^A-Z0-9]/ig, "")
@@ -115,9 +125,21 @@ function checkUserAnswer() { // Compare user answer to correct answer --- LC = L
     displayResultMessages(finalUserAnswerLC, correctAnswerLC);
 }
 
-function updateQuestionField() {
+function setCategoryID() { // Sets the game's current category and starts the game in the selected category
+    let categoryScreen = document.getElementById("categorySelection");
+    let gameArea = document.getElementById("gameArea");
+    currentCategoryID = this.value;
+    retrieveAPIQuestion();
+    categoryScreen.style.display = "none";
+    gameArea.style.display = "block";
+    haveQuestionsRemaining = 1;
+    console.log(currentCategoryID);
+}
+
+function updateClueField(questionData, questionIndex) { // Update Question/Clue HTML element on the page
     let clueField = document.getElementById("clue");
-    clueField.innerText = `${currentQuestionClue}`;
+    clueField.innerText = `${questionData.clues[questionIndex].question}`;
+    console.log(questionData.clues[questionIndex].question);
 }
 
 function renderGameArea() {// Display the Questions the question game area with the current question/clue and an Answer Field
