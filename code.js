@@ -17,6 +17,7 @@ let usedQuestionsArray = [];
 let haveQuestionsRemaining = 0;
 let userScore = 0;
 
+// Active at Load Start
 startButton.addEventListener("click", startGame);
 randomAPIQuestionReference();
 
@@ -50,16 +51,11 @@ function startGame() { // Starts the game
 
 function nextQuestion() { // Proceeds to the next question in the category
     let congratsScreen = document.getElementById("congratsMessage");
-    let gameArea = document.getElementById("gameArea");
-    let categoryScreen = document.getElementById("categorySelection");
     let answerField = document.getElementById("userAnswer");
     congratsScreen.style.display = "none";
     answerField.value = "";
     if (haveQuestionsRemaining == 0) {
-        gameArea.style.display = "none";
-        categoryScreen.style.display = "block";
-        categoryIDArray = [];
-        usedQuestionsArray = [];
+        updateCategoryScreen();
         randomAPIQuestionReference();
     } else {
         retrieveAPIQuestion();
@@ -88,14 +84,13 @@ function determineCategoryName(categoryID) { // Determines the Title of a Catego
 }
 
 function determineQuestionData(questionData) { // Determines the question and answer data to be displayed
-    console.log(questionData);
     let currentIndex = determineUsedQuestions(questionData);
     updateClueField(questionData, currentIndex);
     currentQuestionAnswer = questionData.clues[currentIndex].answer;
-    console.log(currentQuestionAnswer);
     if (questionData.clues.length === 1) {
         haveQuestionsRemaining = 0;
     }
+    devConsoleLogTool(questionData.clues[currentIndex]);
     return questionData;
 }
 
@@ -124,15 +119,24 @@ function determineAnswersCorrect() { // Compare user answer to correct answer --
     displayResultMessages(finalUserAnswerLC, correctAnswerLC);
 }
 
-function setCategoryID() { // Sets the game's current category and starts the game in the selected category
-    let categoryScreen = document.getElementById("categorySelection");
-    let gameArea = document.getElementById("gameArea");
-    currentCategoryID = this.value;
-    retrieveAPIQuestion();
-    categoryScreen.style.display = "none";
-    gameArea.style.display = "block";
-    haveQuestionsRemaining = 1;
-    console.log(currentCategoryID);
+function displayResultMessages(userAnswer, correctAnswer) { // Display Congrats or Correct answer depending on answer
+    let congratsScreen = document.getElementById("congratsMessage");
+    let gameOverScreen = document.getElementById("gameOverMessage");
+    let nextButton = document.getElementById("nextButton");
+    let restartButton = document.getElementById("restartButton");
+    let correctAnswerDisplay = document.getElementById("correctAnswer");
+    let endScoreDisplay = document.getElementById("endScore");
+    if (userAnswer === correctAnswer) {
+        userScore++;
+        updatePointsRender();
+        congratsScreen.style.display = "block";
+        nextButton.addEventListener("click", nextQuestion);
+    } else {
+        gameOverScreen.style.display = "block";
+        correctAnswerDisplay.innerText = `The Correct Answer was: \n${currentQuestionAnswer.toUpperCase()}`
+        endScoreDisplay.innerText = `FINAL SCORE: ${userScore}`;
+        restartButton.addEventListener("click", restartGame)
+    }
 }
 
 function renderCategorySelection() { // Renders Category Buttons to the Catergory Selection Screen after Random Categories have been determined
@@ -147,8 +151,6 @@ function renderCategorySelection() { // Renders Category Buttons to the Catergor
         categoryButton.value = categoryIDArray[amount];
         categoryButton.onclick = setCategoryID;
         }
-    console.log(categoryIDArray);
-    console.log(categoryNameArray);
 }
 
 function renderGameArea() {// Display the Questions the question game area with the current question/clue and an Answer Field
@@ -170,10 +172,32 @@ function renderGameArea() {// Display the Questions the question game area with 
     scoreDisplay.id = "gameFooterScore";
     scoreDisplay.innerText = `SCORE: ${userScore}`;
 }
+
+function setCategoryID() { // Sets the game's current category and starts the game in the selected category
+    let categoryScreen = document.getElementById("categorySelection");
+    let gameArea = document.getElementById("gameArea");
+    currentCategoryID = this.value;
+    retrieveAPIQuestion();
+    categoryScreen.style.display = "none";
+    gameArea.style.display = "block";
+    haveQuestionsRemaining = 1;
+}
+
+function updateCategoryScreen() { // This function will update the Category Selection Screen when the user answers all the questions in a category
+    let gameArea = document.getElementById("gameArea");
+    let categoryScreen = document.getElementById("categorySelection");
+    let selectCategoryText = document.getElementById("selectCategoryText");
+
+    gameArea.style.display = "none";
+    categoryScreen.style.display = "block";
+    selectCategoryText.innerText = "SELECT ANOTHER CATEGORY";
+    categoryIDArray = [];
+    usedQuestionsArray = [];
+}
+
 function updateClueField(questionData, questionIndex) { // Update Question/Clue HTML element on the page
     let clueField = document.getElementById("clue");
     clueField.innerText = `${questionData.clues[questionIndex].question.toUpperCase()}`;
-    console.log(questionData.clues[questionIndex].question);
 }
 
 function updatePointsRender() { // This funtion will update the point render in the game
@@ -182,22 +206,17 @@ function updatePointsRender() { // This funtion will update the point render in 
     console.log(`Score: ${userScore}`)
 }
 
-function displayResultMessages(userAnswer, correctAnswer) { // Display Congrats or Correct answer depending on answer
-    let congratsScreen = document.getElementById("congratsMessage");
-    let gameOverScreen = document.getElementById("gameOverMessage");
-    let nextButton = document.getElementById("nextButton");
-    let restartButton = document.getElementById("restartButton");
-    let correctAnswerDisplay = document.getElementById("correctAnswer");
-    let endScoreDisplay = document.getElementById("endScore");
-    if (userAnswer === correctAnswer) {
-        userScore++;
-        updatePointsRender();
-        congratsScreen.style.display = "block";
-        nextButton.addEventListener("click", nextQuestion);
-    } else {
-        gameOverScreen.style.display = "block";
-        correctAnswerDisplay.innerText = `The Correct Answer was: \n${correctAnswer.toUpperCase()}`
-        endScoreDisplay.innerText = `FINAL SCORE: ${userScore}`;
-        restartButton.addEventListener("click", restartGame)
+// ---------------------------------------------------------------------------------------
+
+function devConsoleLogTool(theTest) { // A dev tool function to return an object in the console with detail of a test
+    let developerView = {
+        devCheatSheet: {        
+            theCategoryID: theTest.categoryId,
+            theCategoryTitle: theTest.category.title,
+            theCurrentClue: theTest.question,
+            theCurrentAnswer: theTest.answer,
+            theCurrentScore: userScore,
+        }
     }
+    console.log(developerView);
 }
